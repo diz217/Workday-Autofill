@@ -13,72 +13,11 @@
   'use strict';
 
 const SKILLS = [
-    "Python",
-    "SQL",
-    "R programming",
-    "Bash",
-    "Shell",
-    "Machine Learning",
-    "Gradient Boosting",
-    "Random Forest",
-    "K-Means Clustering",
-    "Principal Component Analysis (PCA)",
-    "Deep Learning",
-    "Time Series Forecasting",
-    "Transformer Models",
-    "Recurrent Neural Networks (RNN)",
-    "Long Short-Term Memory (LSTM)",
-    "Computer Vision",
-    "Convolutional Neural Networks (CNN)",
-    "Graph Neural Networks (GNN)",
-    "Natural Language Processing (NLP)",
-    "Large Language Models (LLM)",
-    "Retrieval-Augmented Generation (RAG)",
-    "Prompt Engineering",
-    "Named Entity Recognition (NER)",
-    "LangChain",
-    "Vector Databases",
-    "OpenAI",
-    "Data Preprocessing",
-    "Data Cleansing",
-    "Data Augmentation",
-    "Anomaly Detection",
-    "Hypothesis Testing",
-    "A/B Testing",
-    "Multivariate Regression",
-    "Causal Inference",
-    "PyTorch",
-    "TensorFlow",
-    "Keras",
-    "Scikit-learn",
-    "Pandas Python Library",
-    "NumPy",
-    "SciPy",
-    "Docker",
-    "Amazon Web Services (AWS)",
-    "Slurm Workload Manager",
-    "Distributed Computing",
-    "Git",
-    "Snowflake",
-    "PostgreSQL",
-    "MLflow",
-    "XGBoost",
-    "LightGBM",
-    "UMAP",
-    "ResNet",
-    "Hugging Face",
-    "FAISS"
+    "<fill the skills>"
     ]
-
-const USE_LAST_OPTION = [
-  "XGBoost",
-  "LightGBM",
-  "UMAP",
-  "ResNet",
-  "Hugging Face",
-  "FAISS"
-];
-
+  const USE_LAST_OPTION = [
+    "<fill the skills not in the workday auto-fills>"
+  ];
   const TYPE_DELAY_MS = 100;
   const BETWEEN_SKILLS_MS = 1200;
 
@@ -222,7 +161,7 @@ async function waitForDropdownOptions(timeoutMs = 2500, pollMs = 120) {
   while (Date.now() - start < timeoutMs) {
     const options = findDropdownOptions();
 
-    // 用候选文本做签名，而不是只看数量
+    // create a signature for each skill to make sure it is current
     const signature = options
       .map(x => (x.innerText || "").trim())
       .join(" || ");
@@ -242,25 +181,14 @@ async function waitForDropdownOptions(timeoutMs = 2500, pollMs = 120) {
     await sleep(pollMs);
   }
 
-  return lastOptions; // 超时也返回最后一次看到的 options，可能是 []
+  return lastOptions;
 }
 async function chooseSuggestionOrCommit(el, skill) {
-  const USE_LAST_OPTION = [
-    "XGBoost",
-    "LightGBM",
-    "UMAP",
-    "ResNet",
-    "Hugging Face",
-    "FAISS"
-  ];
-
-  // 第一次 Enter：打开候选列表
   pressKey(el, "Enter");
   await sleep(1500);
 
   let options = await waitForDropdownOptions(3000, 120);
 
-  // 如果第一次没拿到，再试一次 Enter
   if (!options.length) {
     pressKey(el, "Enter");
     await sleep(800);
@@ -338,8 +266,8 @@ async function chooseSuggestionOrCommit(el, skill) {
     panel.innerHTML = `
       <div style="font-weight:700; margin-bottom:8px;">Workday Skills Autofill</div>
       <div style="font-size:12px; line-height:1.4; opacity:0.9; margin-bottom:8px;">
-        先点击一次真正的 skills 输入框。<br>
-        然后点 Fill，或者按 <b>Ctrl+Shift+S</b>。
+        To use, hit the skill fill-in。<br>
+        And then hit Fill, or use <b>Ctrl+Shift+S</b>。
       </div>
       <button id="wd-fill-btn" style="
         width:100%; padding:10px; border:none; border-radius:10px;
@@ -402,7 +330,7 @@ async function chooseSuggestionOrCommit(el, skill) {
     STOP = false;
 
     if (!capturedInput || !document.contains(capturedInput)) {
-      setStatus("❌ 没抓到输入框。先点击 skills 输入框一次。");
+      setStatus("没抓到输入框。先点击 skills 输入框一次。");
       return;
     }
 
@@ -423,7 +351,7 @@ async function chooseSuggestionOrCommit(el, skill) {
         log(`Skill "${skill}" -> ${action}`);
 
         if (action === "no-option-found") {
-            setStatus(`❌ No option found for: ${skill}`);
+            setStatus(` No option found for: ${skill}`);
             STOP = true;
             return;
         }
@@ -431,7 +359,7 @@ async function chooseSuggestionOrCommit(el, skill) {
         await sleep(BETWEEN_SKILLS_MS);
     }
 
-    setStatus("✅ Done.");
+    setStatus(" Done.");
   }
 
   setTimeout(() => {
