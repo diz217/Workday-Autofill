@@ -4,7 +4,7 @@ Automatically add skills in Workday job applications by interacting with the dro
 The script waits for Workday's dynamically rendered dropdown suggestions and selects the correct candidate automatically.
 
 ## Why this exists
-Applying to jobs on Workday often requires manually adding dozens of skills one by one.
+Adding skills in Workday applications is repetitive:
 
 Each skill requires:
 1. typing the skill
@@ -14,59 +14,49 @@ Each skill requires:
 
 This script automates the entire process directly in the browser.
 
-## Key Features
-### Smart Dropdown Detection
-Detects Workday dropdown candidates using DOM structure rather than fragile text matching.
+## Installation 
+The script is intended to run through **Tampermonkey**.
+### 1. Install Tampermonkey
+Chrome/Edge/Firefox extension
+### 2. Add a new script. 
+Create a new userscript and paste the code.
 
-### Rendering Wait Logic
-Implements a **signature-based waiting mechanism** to ensure the dropdown suggestions are fully rendered before selection.
-
-### Stable Candidate Selection
-Supports two strategies:
-- select the **first candidate**
-- select the **last candidate** (useful for certain skills)
-
-### Checkbox Interaction
-Clicks the correct checkbox element inside each candidate instead of the container node.
-
-### Fully Client-Side
-Runs directly in the browser console. No server, no API, no login automation.
-
-### Custom Skill List
-Users can define their own skill array to auto-fill.
-
-## How It Works
-The script automates the Workday skill input process by:
-
-1. Typing a skill into the input field
-2. Opening the dropdown suggestion list
-3. Waiting for the suggestions to render
-4. Detecting all dropdown candidates (`menuItem`)
-5. Selecting the correct candidate
-6. Clicking the checkbox inside the candidate
-7. Repeating for the next skill
-
-Core components:
-
-- `findDropdownOptions()`  
-  Detects visible Workday dropdown candidates.
-
-- `waitForDropdownOptions()`  
-  Waits until the candidate list stabilizes using a signature check.
-
-- `chooseSuggestionOrCommit()`  
-  Selects and clicks the correct candidate.
-  
-To avoid race conditions caused by React rendering, the script uses a **signature-based stabilization check**.
-
-The dropdown is considered stable when the list of candidate texts stops changing.
-
+Or import from:
+```
+src/Workday_Skills_Autofill.js
+```
 ## Usage
+1. Open a Workday job application page
+2. Navigate to the Skills section
+3. Open browser console or run the Tampermonkey script
+4. The script will automatically:
+- type each skill
+- wait for dropdown suggestions
+- select the correct candidate
 
-1. Open a Workday job application page.
-2. Open the browser console.
-3. Paste the script.
-4. Run the autofill function.
+## Internal Design
+Workday dropdown suggestions are rendered dynamically (React).
+
+To interact with them reliably, the script implements three mechanisms:
+### Dropdown Detection
+```
+[data-automation-id="menuItem"]
+```
+Only visible candidates containing a checkbox are considered valid.
+
+### Stabilization Wait
+The dropdown list is considered stable when the **candidate text signature stops changing**.
+```javascript
+const signature = options.map(x => (x.innerText || "").trim()).join(" || ");
+```
+This avoids selecting candidates before rendering completes.
+
+### Checkbox Selection
+Instead of clicking the container element, the script directly clicks the checkbox inside each candidate.
+```
+const checkboxInput = target.querySelector('input[type="checkbox"]');
+```
+This ensures reliable selection.
 
 ## Limitations
 - Works only on Workday pages using the standard dropdown component.
