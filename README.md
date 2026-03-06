@@ -22,7 +22,7 @@ Chrome/Edge/Firefox extension
 Create a new userscript and paste the code.
 
 Or import from:
-```
+```bash
 src/Workday_Skills_Autofill.js
 ```
 ## Usage
@@ -34,12 +34,34 @@ src/Workday_Skills_Autofill.js
 - wait for dropdown suggestions
 - select the correct candidate
 
+## Configuration
+Skills need to be customized before usage, for example:
+```javascript
+const SKILLS = [
+  "Python",
+  "SQL",
+  "Machine Learning",
+  "Deep Learning",
+  "PyTorch",
+  "TensorFlow",
+  "XGBoost",
+  "LightGBM"
+];
+```
+Some skills require selecting the **last dropdown candidate** instead of the first, because they are not included in workday autofills, for example:
+```javascript
+const USE_LAST_OPTION = [
+  "XGBoost",
+  "LightGBM"
+];
+```
+
 ## Internal Design
 Workday dropdown suggestions are rendered dynamically (React).
 
 To interact with them reliably, the script implements three mechanisms:
 ### Dropdown Detection
-```
+```javascript
 [data-automation-id="menuItem"]
 ```
 Only visible candidates containing a checkbox are considered valid.
@@ -53,17 +75,26 @@ This avoids selecting candidates before rendering completes.
 
 ### Checkbox Selection
 Instead of clicking the container element, the script directly clicks the checkbox inside each candidate.
-```
+```javascript
 const checkboxInput = target.querySelector('input[type="checkbox"]');
 ```
 This ensures reliable selection.
 
+## Project Structure
+```bash
+Workday-Autofill
+│
+├─ src
+│  └─ Workday-Skills_Autofill.js
+├─ .gitignore
+├─ README.md
+└─ LICENSE
+```
 ## Limitations
-- Works only on Workday pages using the standard dropdown component.
+- Works only with Workday dropdown skill fields.
 - DOM structure may vary across companies.
-- If Workday updates their frontend structure, selectors may need adjustment.
+- Future Workday updates may break selectors.
 
 ## Disclaimer
-This tool interacts only with the client-side DOM of the page.
-It does not bypass authentication or access any protected APIs.
+This script only interacts with the browser DOM and does not bypass authentication or access private APIs.
 Use at your own discretion.
