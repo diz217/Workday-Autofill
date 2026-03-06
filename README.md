@@ -1,9 +1,9 @@
 # Workday-Autofill
-Automatically fill skill fields in Workday job applications by interacting with the dropdown suggestion system. Workday applications are notoriously repetitive.
+Automatically add skills in Workday job applications by interacting with the dropdown suggestion system.
 
-A lightweight browser script that detects Workday dropdown candidates, waits for rendering, and selects the correct skill automatically.
+The script waits for Workday's dynamically rendered dropdown suggestions and selects the correct candidate automatically.
 
-## Overview
+## Why this exists
 Applying to jobs on Workday often requires manually adding dozens of skills one by one.
 
 Each skill requires:
